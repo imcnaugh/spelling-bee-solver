@@ -1,5 +1,5 @@
 
-fn hello() -> String {
+fn _hello() -> String {
     String::from("Hello, world!")
 }
 
@@ -9,6 +9,6 @@ mod tests {
 
     #[test]
     fn hello_test() {
-        assert_eq!(hello(), "Hello, world!".to_string());
+        assert_eq!(_hello(), "Hello, world!".to_string());
     }
 }
