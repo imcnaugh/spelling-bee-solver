@@ -4,6 +4,9 @@ fn _hello() -> String {
     String::from("Hello, world!")
 }
 
+
+// TODO combine sanitize input and validate input
+// Then break this into its own module
 fn sanitize_input(outside_chars: Vec<char>, inside_char: char) -> Result<(Vec<char>, char), String> {
     let mut unique_outside_chars = HashSet::new();
     outside_chars.iter().for_each(|&c|{
