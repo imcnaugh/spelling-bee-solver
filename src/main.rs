@@ -16,5 +16,7 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
-    println!("{}", args.outside_letters);
+    let outside_letters = args.outside_letters.chars().collect();
+
+    nyt_spelling_bee_solver::sanitize_and_validate(outside_letters, args.inside_letter)
 }
