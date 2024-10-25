@@ -1,5 +1,26 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::path::Path;
+
+pub fn get_solution(outside_chars: Vec<char>, inside_char:char) -> Vec<String> {
+    let (sanitized_outside_chars, sanitized_inside_char) = sanitize_input(&outside_chars, &inside_char).unwrap();
+    validate_input(&sanitized_outside_chars, &sanitized_inside_char).unwrap();
+
+    let hash_map_of_valid_words = process_word_list();
+
+    let permutations = get_permutations(sanitized_outside_chars, sanitized_inside_char);
+
+    let mut result: Vec<String> = vec![];
+
+    for p in permutations {
+        if let Some(words) = hash_map_of_valid_words.get(&p) {
+            for w in words {
+                result.push(w.to_string());
+            }
+        }
+    }
+
+    result
+}
 
 pub fn sanitize_and_validate(outside_chars: Vec<char>, inside_char: char) -> (Vec<char>, char) {
     let (outside_char, inside_char) = sanitize_input(&outside_chars, &inside_char).unwrap();
@@ -80,12 +101,36 @@ fn generate_combinations(
     }
 }
 
-pub fn process_word_list() {
-    let path_to_word_file = Path::new("/usr/share/dict/words");
+pub fn process_word_list() -> HashMap<String, Vec<String>> {
+    let mut processed_words:HashMap<String, Vec<String>> = HashMap::new();
 
-    // open the file and print the contents
+    let path_to_word_file = Path::new("/usr/share/dict/words");
     let word_list = std::fs::read_to_string(path_to_word_file).expect("Unable to read file");
-    println!("{}", word_list);
+
+    let words = word_list.split("\n");
+
+    for w in words {
+        if w.len() < 4 {
+            continue
+        }
+
+        let w = w.to_lowercase();
+
+        let mut unique_chars = HashSet::new();
+        for x in w.chars() {
+            unique_chars.insert(x);
+        };
+
+        let mut chars: Vec<char> = unique_chars.into_iter().collect();
+        chars.sort();
+
+        // join the chars into a string name key
+        let key = chars.iter().collect::<String>();
+
+        processed_words.entry(key).or_insert(Vec::new()).push(w.to_string());
+    }
+
+    processed_words
 }
 
 #[cfg(test)]
