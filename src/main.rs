@@ -19,8 +19,10 @@ fn main() {
     let outside_letters = args.outside_letters.chars().collect();
 
     let mut result = nyt_spelling_bee_solver::get_solution(outside_letters, args.inside_letter);
-    
+
     result.sort();
 
-    println!("{:?}", result);
+    for w in result {
+        println!("{w}");
+    }
 }
