@@ -1,11 +1,13 @@
 use std::collections::HashSet;
 
-pub fn sanitize_and_validate(outside_chars: Vec<char>, inside_char: char) {
-    let (outside_char, inside_char) = sanitize_input(outside_chars, inside_char).unwrap();
+pub fn sanitize_and_validate(outside_chars: Vec<char>, inside_char: char) -> (Vec<char>, char) {
+    let (outside_char, inside_char) = sanitize_input(&outside_chars, &inside_char).unwrap();
     validate_input(&outside_char, &inside_char).unwrap();
+
+    (outside_chars, inside_char)
 }
 
-fn sanitize_input(outside_chars: Vec<char>, inside_char: char) -> Result<(Vec<char>, char), String> {
+fn sanitize_input(outside_chars: &Vec<char>, inside_char: &char) -> Result<(Vec<char>, char), String> {
     let mut unique_outside_chars = HashSet::new();
     outside_chars.iter().for_each(|&c|{
         unique_outside_chars.insert(c.to_lowercase().next().unwrap());
@@ -40,7 +42,48 @@ fn validate_input(outside_chars: &Vec<char>, inside_char: &char) -> Result<(), S
     Ok(())
 }
 
+pub fn get_permutations(outside_chars: Vec<char>, inside_char: char) -> Vec<String> {
+    let min_length = 3;
 
+    let mut perumtations: Vec<String> = vec![];
+
+    for length in min_length..=outside_chars.len() {
+        let mut current_combination = Vec::with_capacity(length);
+        generate_combinations(&outside_chars, length, 0, &mut current_combination, &mut perumtations);
+    };
+
+    perumtations.iter_mut().for_each(|s| {
+        s.push(inside_char);
+        let mut chars: Vec<char> = s.chars().collect();
+
+        // Sort the vector of characters
+        chars.sort();
+
+        // Collect the sorted characters back into the string
+        *s = String::from_iter(chars);
+    });
+
+    perumtations
+}
+
+fn generate_combinations(
+    chars: &[char],
+    length: usize,
+    start: usize,
+    current_combinations: &mut Vec<char>,
+    perumtations: &mut Vec<String>,
+) {
+    if current_combinations.len() == length {
+        perumtations.push(current_combinations.iter().collect());
+        return;
+    }
+
+    for i in start..chars.len() {
+        current_combinations.push(chars[i]);
+        generate_combinations(chars, length, i + 1, current_combinations, perumtations);
+        current_combinations.pop();
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -103,7 +146,7 @@ mod tests {
         let outside_chars = vec!['A'];
         let inside_char = 'D';
 
-        let result = sanitize_input(outside_chars, inside_char);
+        let result = sanitize_input(&outside_chars, &inside_char);
 
         match result {
             Ok((o, i)) => {
@@ -118,7 +161,7 @@ mod tests {
     fn sanitize_input_errors_on_non_unique_outside_chars() {
         let input = vec!['a', 'b', 'c', 'a'];
         let inside_char = 'd';
-        assert_eq!(sanitize_input(input, inside_char), Err("all outside characters must be unique".to_string()));
+        assert_eq!(sanitize_input(&input, &inside_char), Err("all outside characters must be unique".to_string()));
     }
 
     #[test]
@@ -126,7 +169,7 @@ mod tests {
         let input_outside_chars = vec!['b','a'];
         let input_inside_char = 'c';
 
-        let (sanitized_outside_chars, sanitized_inside_char) = sanitize_input(input_outside_chars, input_inside_char).unwrap();
+        let (sanitized_outside_chars, sanitized_inside_char) = sanitize_input(&input_outside_chars, &input_inside_char).unwrap();
         assert_eq!(vec!['a', 'b'], sanitized_outside_chars);
         assert_eq!('c', sanitized_inside_char);
     }
