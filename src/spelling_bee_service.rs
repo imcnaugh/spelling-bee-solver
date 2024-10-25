@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::path::Path;
 
 pub fn sanitize_and_validate(outside_chars: Vec<char>, inside_char: char) -> (Vec<char>, char) {
     let (outside_char, inside_char) = sanitize_input(&outside_chars, &inside_char).unwrap();
@@ -43,11 +44,9 @@ fn validate_input(outside_chars: &Vec<char>, inside_char: &char) -> Result<(), S
 }
 
 pub fn get_permutations(outside_chars: Vec<char>, inside_char: char) -> Vec<String> {
-    let min_length = 3;
-
     let mut perumtations: Vec<String> = vec![];
 
-    for length in min_length..=outside_chars.len() {
+    for length in 0..=outside_chars.len() {
         let mut current_combination = Vec::with_capacity(length);
         generate_combinations(&outside_chars, length, 0, &mut current_combination, &mut perumtations);
     };
@@ -55,11 +54,7 @@ pub fn get_permutations(outside_chars: Vec<char>, inside_char: char) -> Vec<Stri
     perumtations.iter_mut().for_each(|s| {
         s.push(inside_char);
         let mut chars: Vec<char> = s.chars().collect();
-
-        // Sort the vector of characters
         chars.sort();
-
-        // Collect the sorted characters back into the string
         *s = String::from_iter(chars);
     });
 
@@ -83,6 +78,14 @@ fn generate_combinations(
         generate_combinations(chars, length, i + 1, current_combinations, perumtations);
         current_combinations.pop();
     }
+}
+
+pub fn process_word_list() {
+    let path_to_word_file = Path::new("/usr/share/dict/words");
+
+    // open the file and print the contents
+    let word_list = std::fs::read_to_string(path_to_word_file).expect("Unable to read file");
+    println!("{}", word_list);
 }
 
 #[cfg(test)]
