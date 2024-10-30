@@ -35,7 +35,7 @@ fn main() {
     //sort result by length then alpha
     result.sort_by(|a, b| {
         if a.len() == b.len() {
-            a.cmp(b)
+            b.cmp(a)
         } else {
             a.len().cmp(&b.len())
         }
