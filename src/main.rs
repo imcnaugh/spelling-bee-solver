@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use clap::Parser;
 
 #[derive(Parser, Debug)]
@@ -20,7 +21,27 @@ fn main() {
 
     let mut result = nyt_spelling_bee_solver::get_solution(outside_letters, args.inside_letter);
 
-    result.sort();
+    for mut word in &mut result {
+        if word.len() < 7 {
+            continue;
+        }
+
+        // check if the word has 7 unique chars
+        if word.chars().collect::<HashSet<_>>().len() == 7 {
+            word.push_str(" *");
+        };
+    }
+
+    //sort result by length then alpha
+    result.sort_by(|a, b| {
+        if a.len() == b.len() {
+            a.cmp(b)
+        } else {
+            a.len().cmp(&b.len())
+        }
+    });
+
+    result.reverse();
 
     for w in result {
         println!("{w}");
