@@ -21,7 +21,7 @@ fn main() {
 
     let mut result = nyt_spelling_bee_solver::get_solution(outside_letters, args.inside_letter);
 
-    for mut word in &mut result {
+    for word in &mut result {
         if word.len() < 7 {
             continue;
         }

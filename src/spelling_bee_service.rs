@@ -22,7 +22,7 @@ pub fn get_solution(outside_chars: Vec<char>, inside_char:char) -> Vec<String> {
     result
 }
 
-fn sanitize_input(outside_chars: &Vec<char>, inside_char: &char) -> Result<(Vec<char>, char), String> {
+fn sanitize_input(outside_chars: &[char], inside_char: &char) -> Result<(Vec<char>, char), String> {
     let mut unique_outside_chars = HashSet::new();
     outside_chars.iter().for_each(|&c|{
         unique_outside_chars.insert(c.to_lowercase().next().unwrap());
@@ -120,7 +120,7 @@ pub fn process_word_list() -> HashMap<String, Vec<String>> {
         // join the chars into a string name key
         let key = chars.iter().collect::<String>();
 
-        processed_words.entry(key).or_insert(Vec::new()).push(w.to_string());
+        processed_words.entry(key).or_default().push(w.to_string());
     }
 
     processed_words
