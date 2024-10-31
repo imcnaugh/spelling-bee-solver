@@ -22,13 +22,6 @@ pub fn get_solution(outside_chars: Vec<char>, inside_char:char) -> Vec<String> {
     result
 }
 
-pub fn sanitize_and_validate(outside_chars: Vec<char>, inside_char: char) -> (Vec<char>, char) {
-    let (outside_char, inside_char) = sanitize_input(&outside_chars, &inside_char).unwrap();
-    validate_input(&outside_char, &inside_char).unwrap();
-
-    (outside_chars, inside_char)
-}
-
 fn sanitize_input(outside_chars: &Vec<char>, inside_char: &char) -> Result<(Vec<char>, char), String> {
     let mut unique_outside_chars = HashSet::new();
     outside_chars.iter().for_each(|&c|{
